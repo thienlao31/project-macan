@@ -1,0 +1,20 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./components/**/*.{vue,js,ts}',
+    './layouts/**/*.vue',
+    './pages/**/*.vue',
+    './app.vue',
+    './plugins/**/*.{js,ts}',
+    './nuxt.config.{js,ts}'],
+  theme: {
+    extend: {},
+    screens: {
+      'max-sm': {'max': '480px'}, 
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+    }
+  },
+  plugins: [],
+}
+
