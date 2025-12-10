@@ -23,8 +23,8 @@
           <li><NuxtLink to="/" class="hover:text-green-300 transition">Home</NuxtLink></li>
 <li
   class="relative"
-  @mouseenter="labsOpen = true"
-  @mouseleave="closeLabs"
+  @mouseenter="openLabs"
+  @mouseleave="delayedCloseLabs"
 >
   <button class="flex items-center gap-2 hover:text-green-300 transition">
     Labs
@@ -33,16 +33,23 @@
     </svg>
   </button>
 
-  <div
-    v-show="labsOpen"
-    class="absolute right-0 mt-2 bg-black/70 border border-gray-700 rounded shadow-lg py-2 min-w-[180px] transition-opacity duration-300"
-  >
-    <NuxtLink to="/lab3" class="block px-4 py-2 hover:bg-gray-800">Lab3</NuxtLink>
-    <NuxtLink to="/lab4" class="block px-4 py-2 hover:bg-gray-800">Lab4</NuxtLink>
-    <NuxtLink to="/lab5" class="block px-4 py-2 hover:bg-gray-800">Lab5</NuxtLink>
-    <NuxtLink to="/lab6" class="block px-4 py-2 hover:bg-gray-800">Lab6</NuxtLink>
-  </div>
+  <transition name="fade">
+    <div
+      v-if="labsOpen"
+      class="absolute left-0 top-full bg-black/70 backdrop-blur-md border border-gray-700 
+             rounded-lg shadow-xl py-2 min-w-[160px] z-50"
+      @mouseenter="cancelClose"
+      @mouseleave="delayedCloseLabs"
+    >
+      <NuxtLink to="/lab3" class="block px-4 py-2 hover:bg-gray-800">Lab3</NuxtLink>
+      <NuxtLink to="/lab4" class="block px-4 py-2 hover:bg-gray-800">Lab4</NuxtLink>
+      <NuxtLink to="/lab5" class="block px-4 py-2 hover:bg-gray-800">Lab5</NuxtLink>
+      <NuxtLink to="/lab6" class="block px-4 py-2 hover:bg-gray-800">Lab6</NuxtLink>
+    </div>
+  </transition>
 </li>
+
+
 
 
             <li><NuxtLink to="/login" class="hover:text-green-300 transition">Login</NuxtLink></li>
@@ -117,17 +124,34 @@
 </template>
 
 <script setup>
+let closeTimeout = null
+
+function openLabs() {
+  clearTimeout(closeTimeout)
+  labsOpen.value = true
+}
+
+function delayedCloseLabs() {
+  closeTimeout = setTimeout(() => {
+    labsOpen.value = false
+  }, 250) // ← ЗАДЕРЖКА 250мс (можно изменить)
+}
+
+function cancelClose() {
+  clearTimeout(closeTimeout)
+}
+
 import { ref, computed } from 'vue'
 const route = useRoute()
 
 // Background mapping по пути (подставь свои файлы в /public/images)
 const backgrounds = {
-  '/': '/images/home-bg.gif',
+  '/': '/images/home.jpg',
   '/lab3': '/images/lab3-bg.jpg',
   '/lab4': '/images/lab4-bg.jpg',
   '/lab5': '/images/lab5-bg.jpg',
   '/lab6': '/images/lab6-bg.jpg',
-  '/login': '/images/login-bg.gif',
+  '/login': '/images/login.jpg',
   '/logout': '/images/logout-bg.jpg',
 }
 const backgroundImage = computed(() => backgrounds[route.path] || '/images/default-bg.jpg')
@@ -150,6 +174,15 @@ function toggleLabs() {
 /* небольшая плавная смена фона */
 div[style] { will-change: background-image; }
 </style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 
 
 
