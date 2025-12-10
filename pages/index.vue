@@ -1,23 +1,24 @@
 <template>
-  <header class="flex flex-row w-full items-center p-4 bg-white shadow">
-    <div class="basis-1/4 flex items-center gap-3">
-      <!-- Положите arizonalogo.png в папку public/ -->
-      <img src="/assets/images/cot.png" alt="logo" class="w-16 h-16"/>
-      <span class="font-bold text-xl">MyLab</span>
+  <div class="container mx-auto px-6 py-12 text-white">
+    <div class="flex justify-start"> 
+      <AudioPlayer 
+        cover="/images/album.jpeg"
+        :tracks="[
+          { title: 'MACAN & Брутто - Золотые Купола', src: '/music/track1.mp3' },
+          { title: 'MACAN - 21+', src: '/music/track2.mp3' },
+          { title: 'MACAN - Самый Пьяный Округ В Мире', src: '/music/track3.mp3' },
+          { title: 'MACAN - Плачь, Но Не Звони', src: '/music/track4.mp3' },
+          { title: 'MACAN - Asphalt 8', src: '/music/track5.mp3' },
+          { title: 'MACAN - Май', src: '/music/track6.mp3' },
+          { title: 'MACAN - Брат', src: '/music/track7.mp3' },
+          { title: 'MACAN & Jacone - Все Правильно', src: '/music/track8.mp3' },
+          { title: 'MACAN - Москва Бежит', src: '/music/track9.mp3' }
+        ]"
+      />
     </div>
-
-    <div class="basis-1/4"></div>
-
-    <nav class="basis-1/2 flex justify-end gap-4">
-      <NuxtLink to="/" class="p-2 rounded hover:bg-gray-200">Home</NuxtLink>
-      <NuxtLink to="/Lab3" class="p-2 rounded hover:bg-gray-200">Lab3</NuxtLink>
-      <NuxtLink to="#" class="p-2 rounded hover:bg-gray-200">LogIn</NuxtLink>
-      <NuxtLink to="#" class="p-2 rounded hover:bg-gray-200">LogOut</NuxtLink>
-    </nav>
-  </header>
-
-  <main class="p-8">
-    <h1 class="text-2xl font-semibold">Welcome to Lab 1</h1>
-    <p class="mt-4">Здесь добавьте содержимое вашей лабораторной работы.</p>
-  </main>
+  </div>
 </template>
+
+<script setup>
+import AudioPlayer from '~/components/AudioPlayer.vue'
+</script>
