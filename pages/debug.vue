@@ -55,7 +55,7 @@
             class="p-4 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 rounded-lg transition flex flex-col items-center justify-center"
           >
             <span class="text-blue-300 font-semibold mb-1">Проверить API Login</span>
-            <span class="text-sm text-gray-400">/api/login</span>
+            <span class="text-sm text-gray-400">/api/auth/login</span>
           </button>
           
           <!-- Кнопка для проверки API регистрации -->
@@ -64,7 +64,7 @@
             class="p-4 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 rounded-lg transition flex flex-col items-center justify-center"
           >
             <span class="text-purple-300 font-semibold mb-1">Проверить API Register</span>
-            <span class="text-sm text-gray-400">/api/register</span>
+            <span class="text-sm text-gray-400">/api/auth/register</span>
           </button>
           
           <!-- Кнопка для проверки API логаута -->
@@ -73,7 +73,7 @@
             class="p-4 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg transition flex flex-col items-center justify-center"
           >
             <span class="text-red-300 font-semibold mb-1">Проверить API Logout</span>
-            <span class="text-sm text-gray-400">/api/logout</span>
+            <span class="text-sm text-gray-400">/api/auth/logout</span>
           </button>
         </div>
         
@@ -222,18 +222,30 @@ const apiResult = ref(null)
 async function loadUsers() {
   loadingUsers.value = true
   try {
-    // В реальном проекте здесь был бы API запрос
-    // Для демо просто симулируем загрузку
-    setTimeout(() => {
+    const response = await $fetch('https://project-macan-backend.onrender.com/api/users', {
+      method: 'GET',
+      credentials: 'include'
+    })
+    
+    if (response && Array.isArray(response)) {
+      users.value = response
+    } else {
+      // Заглушка если API не отвечает
       users.value = [
         { email: userEmail.value || 'test@example.com', lastLogin: new Date().toISOString() },
         { email: 'admin@example.com', lastLogin: '2025-01-10T12:30:00Z' },
         { email: 'user@example.com', lastLogin: '2025-01-09T15:45:00Z' }
       ]
-      loadingUsers.value = false
-    }, 500)
+    }
+    loadingUsers.value = false
   } catch (error) {
     console.error('Error loading users:', error)
+    // Заглушка при ошибке
+    users.value = [
+      { email: userEmail.value || 'test@example.com', lastLogin: new Date().toISOString() },
+      { email: 'admin@example.com', lastLogin: '2025-01-10T12:30:00Z' },
+      { email: 'user@example.com', lastLogin: '2025-01-09T15:45:00Z' }
+    ]
     loadingUsers.value = false
   }
 }
@@ -247,12 +259,16 @@ function refreshUsers() {
 async function testLoginAPI() {
   apiResult.value = null
   try {
-    const response = await $fetch('/api/login', {
+    const response = await $fetch('https://project-macan-backend.onrender.com/api/auth/login', {
       method: 'POST',
-      body: {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
         email: 'test@example.com',
         password: '12345'
-      }
+      })
     })
     apiResult.value = response
   } catch (error) {
@@ -264,12 +280,16 @@ async function testRegisterAPI() {
   apiResult.value = null
   try {
     const randomEmail = `test${Math.floor(Math.random() * 1000)}@test.com`
-    const response = await $fetch('/api/register', {
+    const response = await $fetch('https://project-macan-backend.onrender.com/api/auth/register', {
       method: 'POST',
-      body: {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
         email: randomEmail,
         password: 'test123'
-      }
+      })
     })
     apiResult.value = response
     // Обновляем список пользователей после регистрации
@@ -282,8 +302,9 @@ async function testRegisterAPI() {
 async function testLogoutAPI() {
   apiResult.value = null
   try {
-    const response = await $fetch('/api/logout', {
-      method: 'POST'
+    const response = await $fetch('https://project-macan-backend.onrender.com/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include'
     })
     apiResult.value = response
     // Обновляем страницу после логаута

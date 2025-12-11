@@ -30,7 +30,10 @@ import { onMounted } from 'vue'
 
 async function logout() {
   try {
-    await $fetch('/api/logout', { method: 'POST' })
+    await $fetch('https://project-macan-backend.onrender.com/api/auth/logout', { 
+      method: 'POST',
+      credentials: 'include'
+    })
   } catch (error) {
     console.error('Logout error:', error)
   }

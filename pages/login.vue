@@ -359,17 +359,14 @@ const onlineUsers = ref(0)
 async function loadUsers() {
   loadingUsers.value = true
   try {
-    // Здесь должен быть запрос к API для получения списка пользователей
-    // Пока используем заглушку
-    setTimeout(() => {
-      users.value = [
-        { 
-          email: 'test@example.com', 
-          createdAt: '2024-01-01T10:00:00Z',
-          lastLogin: '2025-01-15T14:30:00Z'
-        },
-
-      ]
+    // Загружаем пользователей с бэкенда
+    const response = await $fetch('https://project-macan-backend.onrender.com/api/users', {
+      method: 'GET',
+      credentials: 'include' // Важно для cookies
+    })
+    
+    if (response && Array.isArray(response)) {
+      users.value = response
       
       // Добавляем текущего пользователя, если он есть и его нет в списке
       if (currentUser.value && !users.value.find(u => u.email === currentUser.value)) {
@@ -388,13 +385,31 @@ async function loadUsers() {
           lastLogin: null
         })
       }
-      
-      loadingUsers.value = false
-      onlineUsers.value = Math.min(users.value.length, Math.floor(Math.random() * 5) + 1)
-    }, 800)
+    } else {
+      // Заглушка если API не отвечает
+      users.value = [
+        { 
+          email: 'test@example.com', 
+          createdAt: '2024-01-01T10:00:00Z',
+          lastLogin: '2025-01-15T14:30:00Z'
+        },
+      ]
+    }
+    
+    loadingUsers.value = false
+    onlineUsers.value = Math.min(users.value.length, Math.floor(Math.random() * 5) + 1)
   } catch (error) {
     console.error('Error loading users:', error)
+    // Заглушка при ошибке
+    users.value = [
+      { 
+        email: 'test@example.com', 
+        createdAt: '2024-01-01T10:00:00Z',
+        lastLogin: '2025-01-15T14:30:00Z'
+      },
+    ]
     loadingUsers.value = false
+    onlineUsers.value = Math.min(users.value.length, Math.floor(Math.random() * 5) + 1)
   }
 }
 
@@ -440,12 +455,16 @@ async function submitLogin() {
   try {
     console.log('Sending login request...')
     
-    const res = await $fetch('/api/login', {
+    const res = await $fetch('https://project-macan-backend.onrender.com/api/auth/login', {
       method: 'POST',
-      body: {
+      credentials: 'include', // Важно для cookies
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
         email: loginEmail.value,
         password: loginPassword.value
-      }
+      })
     })
 
     console.log('Login response:', res)
@@ -512,12 +531,16 @@ async function submitRegister() {
   loading.value = true
   
   try {
-    const res = await $fetch('/api/register', {
+    const res = await $fetch('https://project-macan-backend.onrender.com/api/auth/register', {
       method: 'POST',
-      body: {
+      credentials: 'include', // Важно для cookies
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
         email: regEmail.value,
         password: regPassword.value
-      }
+      })
     })
 
     if (res.error) {

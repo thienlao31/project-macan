@@ -1,5 +1,5 @@
 <template>
-  <div class="relative min-h-screen text-white">
+  <div class="z-[100000] relative min-h-screen text-white">
     <!-- Фон (подставляется по route) -->
     <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-700"
          :style="{ backgroundImage: `url(${backgroundImage})` }"></div>
@@ -32,11 +32,12 @@
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
     </svg>
   </button>
+<div class="z-[100000]">
 
   <transition name="fade">
     <div
       v-if="labsOpen"
-      class="absolute left-0 top-full bg-black/70 backdrop-blur-md border border-gray-700 
+      class="z-[100000] absolute left-0 top-full bg-black/70 backdrop-blur-md border border-gray-700 
              rounded-lg shadow-xl py-2 min-w-[160px] z-50"
       @mouseenter="cancelClose"
       @mouseleave="delayedCloseLabs"
@@ -46,7 +47,9 @@
       <NuxtLink to="/lab5" class="block px-4 py-2 hover:bg-gray-800">Lab5</NuxtLink>
       <NuxtLink to="/lab6" class="block px-4 py-2 hover:bg-gray-800">Lab6</NuxtLink>
     </div>
+
   </transition>
+  </div>
 </li>
 
 
